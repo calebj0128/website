@@ -1,0 +1,5 @@
+START HERE: Upload the CONTENTS of the extracted folder, not the whole folder and not the ZIP.
+At the TOP LEVEL in GitHub you must see: .pages.yml, package.json, scripts/, site/, README.md
+Then use Cloudflare Pages: Root=(repository root), Build=npm run build, Output=_site, Framework=None.
+After Cloudflare deploys, open https://app.pagescms.org to enable your Blog Posts editor.
+Full instructions: README.md
