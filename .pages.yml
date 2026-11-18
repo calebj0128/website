@@ -50,3 +50,46 @@ content:
         options:
           format: html
           switcher: true
+
+  - name: sud_resources
+    label: SUD Group Resources
+    type: collection
+    path: site/content/resources
+    format: json
+    filename: "{primary}.json"
+    exclude: [".gitkeep"]
+    view:
+      fields: [title, topic, published]
+      primary: title
+    fields:
+      - name: title
+        label: Resource title
+        type: string
+        required: true
+      - name: topic
+        label: Topic
+        type: select
+        options:
+          values:
+            - Coping Skills
+            - Relapse Prevention
+            - Distress Tolerance
+            - Relationships & Boundaries
+            - Psychoeducation
+            - Other
+      - name: summary
+        label: Short description
+        type: text
+      - name: audience
+        label: Intended audience
+        type: string
+      - name: pdf
+        label: Slides or handout PDF
+        type: file
+        options:
+          extensions: [pdf]
+          path: resources
+      - name: published
+        label: Published on website
+        type: boolean
+        default: false
