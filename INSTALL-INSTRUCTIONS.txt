@@ -1,0 +1,19 @@
+CALEB JOSLIN — SUBSTACK NEWSLETTER UPGRADE
+
+Only 3 files need uploading to your EXISTING GitHub repository: calebj0128/website
+
+1. Extract this ZIP.
+2. Open your repository and choose Add file > Upload files.
+3. Drag the CONTENTS of the extracted folder, not the outer folder. Preserve their exact paths:
+   site/index.html
+   site/writing/post.template.html
+   site/assets/styles.css
+4. Commit to main. Cloudflare Pages will rebuild automatically.
+5. Check the homepage AND an existing blog post for the Substack signup.
+
+IMPORTANT: Do not upload an entire old website ZIP or delete existing content/posts or content/resources.
+The newsletter embed is https://calebjoslin.substack.com/embed.
+If the embedded form is blocked by the browser, the fallback link opens Substack directly.
+The signup is hosted by Substack and does not collect addresses on your website.
+
+TESTS: npm run build and npm test executed locally using the full project.
