@@ -1,0 +1,52 @@
+
+media:
+  input: site/assets/uploads
+  output: /assets/uploads
+  rename: safe
+
+content:
+  - name: posts
+    label: Blog Posts
+    type: collection
+    path: site/content/posts
+    format: json
+    filename: "{primary}.json"
+    exclude: [".gitkeep"]
+    view:
+      fields: [title, category, date, published]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - name: date
+        label: Publication date
+        type: date
+      - name: category
+        label: Category
+        type: select
+        options:
+          values:
+            - Mental Health
+            - Philosophy
+            - Recovery
+            - Personal Reflections
+            - Other
+      - name: summary
+        label: Short description
+        type: text
+      - name: published
+        label: Published on website
+        type: boolean
+        default: false
+      - name: body
+        label: Article
+        type: rich-text
+        options:
+          format: html
+          switcher: true
