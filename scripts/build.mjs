@@ -25,6 +25,34 @@ for (const name of ['index.html', 'about', 'services', 'resources', 'assets']) {
   fs.cpSync(path.join(SRC,name), path.join(DIST,name), {recursive:true});
 }
 
+// Create downloadable SUD resource cards from Pages CMS JSON entries.
+const RESOURCE_DIR = path.join(SRC, 'content', 'resources');
+const RESOURCES_TEMPLATE = path.join(SRC, 'resources', 'index.html');
+const resourceItems = fs.existsSync(RESOURCE_DIR)
+  ? fs.readdirSync(RESOURCE_DIR).filter(n => n.endsWith('.json'))
+  : [];
+const resources = [];
+for (const name of resourceItems) {
+  let item;
+  try { item = JSON.parse(fs.readFileSync(path.join(RESOURCE_DIR, name), 'utf8')); }
+  catch (e) { throw new Error(`Could not read SUD resource ${name}: ${e.message}`); }
+  if (item.published !== true) continue;
+  if (typeof item.title !== 'string' || !item.title.trim()) throw new Error(`Published resource ${name} needs a title`);
+  const pdf = typeof item.pdf === 'string' ? item.pdf.trim() : '';
+  if (!pdf || !pdf.startsWith('/assets/uploads/') || !/\.pdf(?:$|\?)/i.test(pdf) || pdf.includes('..') || /["<>]/.test(pdf)) throw new Error(`Resource ${name} needs a valid uploaded PDF path`);
+  const fileOnDisk = path.join(SRC, pdf.replace(/^\//, ''));
+  if (!fs.existsSync(fileOnDisk)) throw new Error(`Resource ${name} references a missing PDF: ${pdf}`);
+  resources.push({title:item.title.trim(),topic:String(item.topic||'SUD Group'),summary:String(item.summary||''),audience:String(item.audience||''),pdf});
+}
+resources.sort((a,b)=>a.title.localeCompare(b.title));
+const resourceCards = resources.length
+  ? resources.map(r => `<article class="feature resource-card"><span class="feature-number">${escapeHTML(r.topic)}</span><h3>${escapeHTML(r.title)}</h3>${r.summary ? `<p>${escapeHTML(r.summary)}</p>` : ''}${r.audience ? `<p class="resource-audience">For: ${escapeHTML(r.audience)}</p>` : ''}<a class="button ghost resource-download" href="${escapeHTML(r.pdf)}" target="_blank" rel="noopener noreferrer">View or download PDF ↗</a></article>`).join('\n')
+  : `<div class="empty-state"><span class="eyebrow">SUD GROUP LIBRARY</span><h2>Group resources are coming soon.</h2><p>Slides, handouts, and activities will appear here when they're ready for public sharing.</p></div>`;
+let resourceHTML = fs.readFileSync(RESOURCES_TEMPLATE, 'utf8');
+if (!resourceHTML.includes('<!-- SUD_RESOURCE_CARDS -->')) throw new Error('Resources page missing SUD resource marker');
+resourceHTML = resourceHTML.replace('<!-- SUD_RESOURCE_CARDS -->', resourceCards);
+fs.writeFileSync(path.join(DIST, 'resources', 'index.html'),resourceHTML);
+
 const fileNames = fs.readdirSync(POSTS).filter(name => name.endsWith('.json'));
 const published = [];
 const used = new Set();

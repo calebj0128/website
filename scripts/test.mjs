@@ -7,6 +7,8 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const p=(...args)=>path.join(root,...args);
 const fixture=p('site','content','posts','temporary-publish-test.json');
 const draft=p('site','content','posts','temporary-draft-test.json');
+const resourceFixture=p('site','content','resources','temporary-resource-test.json');
+const resourcePdf=p('site','assets','uploads','resources','temporary-resource-test.pdf');
 const build=()=>execFileSync(process.execPath, [p('scripts','build.mjs')], {cwd:root,stdio:'pipe'});
 try {
   assert(fs.existsSync(p('.pages.yml')), 'Missing .pages.yml at root');
@@ -25,8 +27,17 @@ try {
   assert(article.includes('November 18, 2026'),'Post date missing');
   assert(!archive.includes('Test Draft'),'Draft displayed in blog archive');
   assert(!fs.existsSync(p('_site','writing','temporary-draft-test')),'Draft got published');
+  fs.mkdirSync(path.dirname(resourcePdf),{recursive:true});
+  fs.writeFileSync(resourcePdf,'%PDF-1.4\n%%EOF\n');
+  fs.writeFileSync(resourceFixture,JSON.stringify({title:'Test Group Presentation', topic:'Distress Tolerance',summary:'Downloadable slides.',pdf:'/assets/uploads/resources/temporary-resource-test.pdf',published:true}));
+  build();
+  const resHtml=fs.readFileSync(p('_site','resources','index.html'),'utf8');
+  assert(resHtml.includes('Test Group Presentation'),'Resource missing from public library');
+  assert(resHtml.includes('/assets/uploads/resources/temporary-resource-test.pdf'),'Resource download link missing');
+  assert(fs.existsSync(p('_site','assets','uploads','resources','temporary-resource-test.pdf')),'PDF not copied');
+  console.log('PASS: downloadable resource collection and file copy.');
   console.log('PASS: site pages, assets, blog archive, post generation, formatting, dates, draft hiding.');
 } finally {
-  for (const f of [fixture,draft]) fs.rmSync(f,{force:true});
+  for (const f of [fixture,draft,resourceFixture,resourcePdf]) fs.rmSync(f,{force:true});
   build();
 }

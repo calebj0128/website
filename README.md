@@ -57,3 +57,9 @@ The basic site runs on Cloudflare Pages free hosting; you pay for the domain you
 Install Node.js 20+ and run `npm run build`. The generated website appears in `_site/`. Run `npm test` to validate the publishing pipeline with temporary example articles. No `npm install` is required.
 
 **Important:** The visual editor is Pages CMS, the site builder is the included `scripts/build.mjs` file (not Eleventy). This eliminates third-party build dependencies, simplifying future maintenance. The original homepage and existing pages are unchanged.
+
+
+## SUD Group Resources (new)
+Open Pages CMS > **SUD Group Resources** > New. Add title, topic, description, and a PDF uploaded through the file picker. Turn **Published on website** ON and save. The repository receives a resource JSON file plus the PDF at `site/assets/uploads/resources/`; Cloudflare builds a card under the existing **Resources** tab automatically.
+
+Only upload material you own or have permission to redistribute; remove all identifying client information. PDFs are publicly available after publication. For large files, compress slide decks to PDF first and check repository/media upload limits.
